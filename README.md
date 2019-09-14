@@ -14,3 +14,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ## To start the app
 
 `npm run start`
+
+## Viewing the app (temporarily)
+
+This app has also been hosted in AWS. Its available [here](https://detective-sheen.pbhopalka.com/).
+But the AWS instance might be disabled after a while.
+For this instance of the app, CI/CD has been enabled.
