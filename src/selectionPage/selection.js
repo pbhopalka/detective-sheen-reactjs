@@ -20,7 +20,7 @@ class SelectionPage extends Component {
             spaceships: [],
             planets: [],
             authToken: '',
-            showInlineError: false
+            submitButtonEnabled: false
         };
     }
 
@@ -105,13 +105,13 @@ class SelectionPage extends Component {
             spaceships[prevShipIndex].total_no += 1;
         }
         missions[index].selectedShapeShip = value;
-        this.updateTotalTime()
+        this.updateTotalTime();
         this.setState({ missions: missions, spaceships: spaceships });
     }
 
     updateTotalTime() {
         let { missions, planets, spaceships } = this.state;
-        let totalTime = 0;
+        let totalTime = 0, missionsSelected = 0;
         missions.forEach(mission => {
             const planet = mission.selectedPlanet;
             const vehicle = mission.selectedShapeShip;
@@ -124,11 +124,11 @@ class SelectionPage extends Component {
                 return vehicleObj.name === vehicle;
             });
             if (planetSelected && vehicleSelected) {
-                totalTime += (planetSelected.distance/vehicleSelected.speed)
-            }
-            
+                totalTime += (planetSelected.distance/vehicleSelected.speed);
+                missionsSelected += 1;
+            }          
         });
-        this.setState({totalTime: totalTime});
+        this.setState({totalTime: totalTime, submitButtonEnabled: (missionsSelected === 4)});
     }
 
     hideError() {
@@ -188,7 +188,7 @@ class SelectionPage extends Component {
                 
                 <div className="row">
                     <div className="col-xs-12">
-                        <Button variant="contained" color="primary" onClick={() => this.findFalcone()}>
+                        <Button disabled={!this.state.submitButtonEnabled} variant="contained" color="primary" onClick={() => this.findFalcone()}>
                             Find Falcone
                         </Button>
                     </div>

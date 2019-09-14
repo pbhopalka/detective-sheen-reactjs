@@ -45,6 +45,9 @@ class Dropdown extends Component {
                     label={selectedPlanet}
                     options={planetList}
                     onChange={this.onSelectUpdate.bind(this)}
+                    placeholder="Choose your planet"
+                    isLoading={!(planets.length > 0)}
+
                 />
                 {selectedPlanet && (
                     <RadioButton 
