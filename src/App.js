@@ -1,28 +1,36 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route} from 'react-router-dom';
 import './App.css';
+import SelectionPage from './selectionPage/selection';
+import ConfirmationScreen from './resultPage/confirmation';
+import ErrorPage from './resultPage/error';
+import NotFound from './resultPage/notFound';
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
+    render() {
+        return (
+            <Router>
+                <header className="App-header">
+                    <div className="row">
+                        <div className="col-xs-12">
+                            Find Falcone
+                        </div>
+                    </div>
+                </header>
+    
+                <main className="App">
+                    <Route exact path="/" component={SelectionPage} />
+                    <Route path="/notFound" component={NotFound} />
+                    <Route path="/found" component={ConfirmationScreen} />
+                    <Route path="/error" component={ErrorPage} />
+                </main>
+
+                {/* <footer className="App-footer">Some footer here</footer> */}
+                
+            </Router>
+        );
+    }
+
 }
 
 export default App;
