@@ -1,4 +1,4 @@
-import { FETCH_TOKEN, FETCH_PLANETS, FETCH_SPACESHIPS, FIND_FALCONE_SUCCESS, FIND_FALCONE_FAILURE, GET_ERROR } from "./actionTypes";
+import { FIND_FALCONE_SUCCESS, FIND_FALCONE_FAILURE, GET_ERROR } from "./actionTypes";
 
 const initialState = {
     planetFound: '',
