@@ -15,7 +15,7 @@ class NotFound extends Component{
                 </div>
 
                 <div className="row">
-                    <div className="col-xs-12 col-sm-offset-3">
+                    <div className="col-xs-12">
                         <Link to="/">
                             <Button variant="contained" color="primary">
                                 Try Again

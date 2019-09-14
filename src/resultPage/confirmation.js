@@ -9,13 +9,13 @@ class ConfirmationScreen extends Component {
         return (
             <div>
                 <div className="row">
-                    <div className="col-xs-12 col-sm-offset-3 text">
+                    <div className="col-xs-12 text">
                         Congratulations. You found the falcone at {this.props.winningPlanet}
                     </div>
                 </div>
 
                 <div className="row">
-                    <div className="col-xs-12 col-sm-offset-3">
+                    <div className="col-xs-12">
                         <Link to="/">
                             <Button variant="contained" color="primary">
                                 Play Again
