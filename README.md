@@ -13,6 +13,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## To start the app
 
+`npm install`
 `npm run start`
 
 ## Viewing the app (temporarily)
