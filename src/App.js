@@ -24,8 +24,6 @@ class App extends Component {
                     <Route path="/found" component={ConfirmationScreen} />
                     <Route path="/error" component={ErrorPage} />
                 </main>
-
-                {/* <footer className="App-footer">Some footer here</footer> */}
                 
             </Router>
         );

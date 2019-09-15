@@ -24,6 +24,9 @@ class SelectionPage extends Component {
         };
     }
 
+    /**
+     * Fetch data from API calls and set it to the component state
+     */
     componentDidMount() {
         axios.defaults.headers.common["Accept"] = "application/json";
         axios.post(TOKEN_API)
@@ -58,10 +61,15 @@ class SelectionPage extends Component {
             .catch(err => this.props.getError(err.message, this.props.history));
     }
 
+    /**
+     * Function when clicked on 'Find Falcone' button
+     * Makes a service call with request params to show either
+     * success screen, failure screen or error screen
+     */
     findFalcone() {
         const { authToken, missions } = this.state;
         const selectedPlanets = missions.map((mission) => {
-            return (mission.selectedPlanet !== "") && mission.selectedPlanet;
+            return mission.selectedPlanet;
         });
         const selectedSpaceships = missions.map((mission) => {
             return mission.selectedShapeShip;
@@ -82,6 +90,11 @@ class SelectionPage extends Component {
             .catch(err => this.props.getError(err.message, this.props.history));
     }
 
+    /**
+     * Handler function when value is Select component changes
+     * @param {String} value 
+     * @param {Integer} index 
+     */
     handlerSelectChange(value, index) {
         let { missions } = this.state;
 
@@ -89,17 +102,23 @@ class SelectionPage extends Component {
         this.setState({ missions: missions });
     }
 
+    /**
+     * Handler function when something gets changed in the radio buttons
+     * Updates the total count of spaceships available
+     * Updates the total time to be taken by all spaceships selected so far
+     * @param {String} value 
+     * @param {Integer} index 
+     */
     handlerRadioButtonChange(value, index) {
         let { missions, spaceships } = this.state;
 
-        console.log(spaceships);
-        let shipIndex = spaceships.findIndex(element => {
+        const shipIndex = spaceships.findIndex(element => {
             return element.name === value
         });
         spaceships[shipIndex].total_no -= 1;
-        let previousSpaceship = missions[index].selectedShapeShip;
+        const previousSpaceship = missions[index].selectedShapeShip;
         if (previousSpaceship !== "") {
-            let prevShipIndex = spaceships.findIndex(element => {
+            const prevShipIndex = spaceships.findIndex(element => {
                 return element.name === previousSpaceship
             });
             spaceships[prevShipIndex].total_no += 1;
@@ -109,6 +128,10 @@ class SelectionPage extends Component {
         this.setState({ missions: missions, spaceships: spaceships });
     }
 
+    /**
+     * Updates the total time the entire mission is going to take
+     * Also decides if the submit button is to be enabled or disabled
+     */
     updateTotalTime() {
         let { missions, planets, spaceships } = this.state;
         let totalTime = 0, missionsSelected = 0;
@@ -129,10 +152,6 @@ class SelectionPage extends Component {
             }          
         });
         this.setState({totalTime: totalTime, submitButtonEnabled: (missionsSelected === 4)});
-    }
-
-    hideError() {
-        this.setState({showInlineError: false});
     }
 
     render() {
@@ -167,8 +186,8 @@ class SelectionPage extends Component {
                                 <Dropdown
                                     index={index}
                                     planets={planets}
-                                    selectedPlanets={selectedPlanets}
                                     spaceships={spaceships}
+                                    selectedPlanets={selectedPlanets}
                                     selectedPlanet={mission.selectedPlanet}
                                     selectedShapeShip={mission.selectedShapeShip}
                                     onSelectChange={this.handlerSelectChange.bind(this)}
