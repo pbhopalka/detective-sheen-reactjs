@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import Dropdown from './dropdown';
 import {Button, Container } from '@material-ui/core';
 import { connect } from 'react-redux'; 
-import axios from 'axios';
 
-import { findFalconeSuccess, findFalconeFailure, getError } from '../redux/actions'
-import { FIND_API, TOKEN_API, PLANET_API, SPACESHIP_API } from '../resources/apiList';
+import { fetchToken, fetchPlanets, fetchSpaceships, findFalcone, updateSpaceshipCount } from '../redux/actions'
 
 class SelectionPage extends Component {
     constructor(props) {
@@ -17,9 +15,7 @@ class SelectionPage extends Component {
                 { selectedPlanet: '', selectedShapeShip: '' },
                 { selectedPlanet: '', selectedShapeShip: '' }
             ],
-            spaceships: [],
-            planets: [],
-            authToken: '',
+            totalTime: 0,
             submitButtonEnabled: false
         };
     }
@@ -28,37 +24,11 @@ class SelectionPage extends Component {
      * Fetch data from API calls and set it to the component state
      */
     componentDidMount() {
-        axios.defaults.headers.common["Accept"] = "application/json";
-        axios.post(TOKEN_API)
-            .then(res => {
-                this.setState({authToken: res.data.token});
-            })
-            .catch(err => this.props.getError(err.message, this.props.history));
+        const { history } = this.props;
 
-        axios.get(PLANET_API)
-            .then(res => {
-                /**
-                 * {"name":"Donlon","distance":100}
-                 */
-                var planets = res.data.map(response => {
-                    return {
-                        value: response.name,
-                        label: response.name,
-                        distance: response.distance
-                    };
-                });
-                this.setState({ planets: planets })
-            })
-            .catch(err => this.props.getError(err.message, this.props.history));
-
-        axios.get(SPACESHIP_API)
-            .then(res => {
-                /*
-                  {"name":"Space pod","total_no":2,"max_distance":200,"speed":2}
-                */
-                this.setState({spaceships: res.data });
-            })
-            .catch(err => this.props.getError(err.message, this.props.history));
+        this.props.fetchToken(history);
+        this.props.fetchPlanets(history);
+        this.props.fetchSpaceships(history);
     }
 
     /**
@@ -67,7 +37,7 @@ class SelectionPage extends Component {
      * success screen, failure screen or error screen
      */
     findFalcone() {
-        const { authToken, missions } = this.state;
+        const { missions } = this.state;
         const selectedPlanets = missions.map((mission) => {
             return mission.selectedPlanet;
         });
@@ -75,19 +45,11 @@ class SelectionPage extends Component {
             return mission.selectedShapeShip;
         });
         const requestObj = {
-            token: authToken,
+            token: this.props.authToken,
             planet_names: selectedPlanets,
             vehicle_names: selectedSpaceships
         };
-        axios.defaults.headers.common["Accept"] = "application/json";
-        axios.defaults.headers.common["Content-Type"] = "application/json";
-        axios.post(FIND_API, requestObj)
-            .then(res => {
-                (res.data.status === "success") ?
-                    this.props.findFalconeSuccess(res.data.planet_name, this.props.history) :
-                    this.props.findFalconeFailure(this.props.history);
-            })
-            .catch(err => this.props.getError(err.message, this.props.history));
+        this.props.findFalcone(requestObj, this.props.history);
     }
 
     /**
@@ -110,22 +72,14 @@ class SelectionPage extends Component {
      * @param {Integer} index 
      */
     handlerRadioButtonChange(value, index) {
-        let { missions, spaceships } = this.state;
-
-        const shipIndex = spaceships.findIndex(element => {
-            return element.name === value
-        });
-        spaceships[shipIndex].total_no -= 1;
+        const { missions } = this.state;
         const previousSpaceship = missions[index].selectedShapeShip;
-        if (previousSpaceship !== "") {
-            const prevShipIndex = spaceships.findIndex(element => {
-                return element.name === previousSpaceship
-            });
-            spaceships[prevShipIndex].total_no += 1;
+        
+        if (value !== previousSpaceship) {
+            missions[index].selectedShapeShip = value;
+            this.props.updateSpaceshipCount(value, previousSpaceship);
+            this.updateTotalTime();
         }
-        missions[index].selectedShapeShip = value;
-        this.updateTotalTime();
-        this.setState({ missions: missions, spaceships: spaceships });
     }
 
     /**
@@ -133,7 +87,8 @@ class SelectionPage extends Component {
      * Also decides if the submit button is to be enabled or disabled
      */
     updateTotalTime() {
-        let { missions, planets, spaceships } = this.state;
+        const { missions } = this.state;
+        const { planets, spaceships } = this.props;
         let totalTime = 0, missionsSelected = 0;
         missions.forEach(mission => {
             const planet = mission.selectedPlanet;
@@ -155,8 +110,7 @@ class SelectionPage extends Component {
     }
 
     render() {
-        const planets = this.state.planets;
-        const spaceships = this.state.spaceships;
+        const { planets, spaceships } = this.props;
         const missions = this.state.missions;
         const selectedPlanets = missions.map((mission) => {
             return mission.selectedPlanet;
@@ -200,7 +154,7 @@ class SelectionPage extends Component {
 
                 <div className="row">
                     <div className="col-xs-12 text">    
-                        Total time for the mission: {this.state.totalTime || 0}   
+                        Total time for the mission: {this.state.totalTime}   
                     </div>
                 </div>
                 
@@ -218,7 +172,18 @@ class SelectionPage extends Component {
     
 };
 
-export default connect(
-    null, 
-    { findFalconeSuccess, findFalconeFailure, getError }
-) (SelectionPage);
+const mapStateToProps = state => ({
+    planets: state.reducers.planets,
+    spaceships: state.reducers.spaceships,
+    authToken: state.reducers.token
+});
+
+const mapDispatchToProps = { 
+    fetchToken, 
+    fetchPlanets, 
+    fetchSpaceships,
+    findFalcone,
+    updateSpaceshipCount 
+};
+
+export default connect(mapStateToProps, mapDispatchToProps) (SelectionPage);
