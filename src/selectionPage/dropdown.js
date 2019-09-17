@@ -27,8 +27,8 @@ class Dropdown extends Component {
 
     /**
      * Returns the list of planets that are still available for the choice
-     * @param {Object []} planets 
-     * @param {String []} selectedPlanets 
+     * @param {Object[]} planets 
+     * @param {String[]} selectedPlanets 
      */
     filterPlanets (planets, selectedPlanets) {
         return planets.filter((planet) => {
@@ -39,8 +39,8 @@ class Dropdown extends Component {
     /**
      * Returns the list of eligible spaceships based on the distance it can travel
      * and the planet selected
-     * @param {Object []} planets 
-     * @param {Object []} spaceships 
+     * @param {Object[]} planets 
+     * @param {Object[]} spaceships 
      * @param {String} selectedPlanet 
      */
     findEligibleSpaceships(planets, spaceships, selectedPlanet) {
