@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
 import './App.css';
+
+import { Provider } from 'react-redux';
+import store from './redux/store';
+
 import SelectionPage from './selectionPage/selection';
 import ConfirmationScreen from './resultPage/confirmation';
 import ErrorPage from './resultPage/error';
@@ -9,6 +13,7 @@ import NotFound from './resultPage/notFound';
 class App extends Component {
     render() {
         return (
+            <Provider store={store}>
             <Router>
                 <header className="App-header">
                     <div className="row">
@@ -26,6 +31,7 @@ class App extends Component {
                 </main>
                 
             </Router>
+            </Provider>
         );
     }
 
